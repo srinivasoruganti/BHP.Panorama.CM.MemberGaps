@@ -1,0 +1,1422 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="1/3/2019 2:11:44 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="LTPC0ECUEH"
+  DTS:CreatorName="HSDYN\sekhe"
+  DTS:DTSID="{EC6D506E-3127-4595-AB60-399CEC03C011}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="15.0.2000.152"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="CRM_SYNC_hsl_policy"
+  DTS:PackageType="5"
+  DTS:VersionBuild="30"
+  DTS:VersionGUID="{B267CA26-280B-4944-B11D-CF7A284E91AD}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{35CF2B8D-E233-4832-9BF9-23F9CFBB184D}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="Token">
+      <DTS:VariableValue
+        DTS:DataType="8"
+        xml:space="preserve"></DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Sync Crm"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{210D16BC-2158-467B-8C7E-718C917C3939}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Sync Crm">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Sync Crm\Get Last Token"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{ECED77FC-46C0-4730-8949-6CDB9E31ABE6}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Get Last Token"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{4CF3AB46-A030-444B-BBB1-208E2A4D92BD}"
+              SQLTask:SqlStatementSource="EXECUTE [stg].[SSIS_GetLastToken] 'hsl_policy'"
+              SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ResultBinding
+                SQLTask:ResultName="LastToken"
+                SQLTask:DtsVariableName="User::Token" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sync Crm\Merge Changes"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{5DB56BA6-B26D-4490-9018-E4397595EA06}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Merge Changes"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{4CF3AB46-A030-444B-BBB1-208E2A4D92BD}"
+              SQLTask:SqlStatementSource="EXECUTE crm.Merge_hsl_policy &#xA;GO&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sync Crm\Retrieve Changes"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{A0F04A8B-E3D6-42E5-AC4F-BE40BB7D4100}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Retrieve Changes"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              autoAdjustBufferSize="true"
+              version="1">
+              <components>
+                <component
+                  refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage"
+                  componentClassID="Microsoft.OLEDBDestination"
+                  contactInfo="OLE DB Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;4"
+                  description="OLE DB Destination"
+                  name="Crm Changes - Stage"
+                  usesDispositions="true"
+                  version="4">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the name of the database object used to open a rowset."
+                      name="OpenRowset">[crm].[hsl_policy_Changes]</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies the variable that contains the name of the database object used to open a rowset."
+                      name="OpenRowsetVariable"></property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1252</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Forces the use of the DefaultCodePage property value when describing character data."
+                      name="AlwaysUseDefaultCodePage">false</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the mode used to access the database."
+                      name="AccessMode"
+                      typeConverter="AccessMode">3</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the values supplied for identity columns will be copied to the destination. If false, values for identity columns will be auto-generated at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepIdentity">false</property>
+                    <property
+                      dataType="System.Boolean"
+                      description="Indicates whether the columns containing null will have null inserted in the destination. If false, columns containing null will have their default values inserted at the destination. Applies only if fast load is turned on."
+                      name="FastLoadKeepNulls">false</property>
+                    <property
+                      dataType="System.String"
+                      description="Specifies options to be used with fast load.  Applies only if fast load is turned on."
+                      name="FastLoadOptions">TABLOCK,CHECK_CONSTRAINTS</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies when commits are issued during data insertion.  A value of 0 specifies that one commit will be issued at the end of data insertion.  Applies only if fast load is turned on."
+                      name="FastLoadMaxInsertCommitSize">2147483647</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Connections[OleDbConnection]"
+                      connectionManagerID="{4CF3AB46-A030-444B-BBB1-208E2A4D92BD}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[bhp-dynamics-dv-db.database.windows.net.crmstaging.bhp_crm_sql_usr]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input]"
+                      errorOrTruncationOperation="Insert"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="OLE DB Destination Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].Columns[hsl_name]"
+                          cachedDataType="wstr"
+                          cachedLength="100"
+                          cachedName="hsl_name"
+                          externalMetadataColumnId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].ExternalColumns[hsl_name]"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[hsl_name]" />
+                        <inputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].Columns[hsl_policyid]"
+                          cachedDataType="guid"
+                          cachedName="hsl_policyid"
+                          externalMetadataColumnId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].ExternalColumns[hsl_policyid]"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[hsl_policyid]" />
+                        <inputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].Columns[hsl_sourceillustrationid]"
+                          cachedDataType="guid"
+                          cachedName="hsl_sourceillustrationid"
+                          externalMetadataColumnId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].ExternalColumns[hsl_sourceillustrationid]"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[hsl_sourceillustrationid]" />
+                        <inputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].Columns[hsl_policynumber]"
+                          cachedDataType="wstr"
+                          cachedLength="100"
+                          cachedName="hsl_policynumber"
+                          externalMetadataColumnId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].ExternalColumns[hsl_policynumber]"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[hsl_policynumber]" />
+                        <inputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].Columns[ownerid]"
+                          cachedDataType="guid"
+                          cachedName="ownerid"
+                          externalMetadataColumnId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].ExternalColumns[ownerid]"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[ownerid]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].ExternalColumns[modifiedon]"
+                          dataType="dbTimeStamp"
+                          name="modifiedon" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].ExternalColumns[hsl_name]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_name" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].ExternalColumns[hsl_policyid]"
+                          dataType="guid"
+                          name="hsl_policyid" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].ExternalColumns[hsl_policynumber]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_policynumber" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].ExternalColumns[hsl_sourceillustrationid]"
+                          dataType="guid"
+                          name="hsl_sourceillustrationid" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input].ExternalColumns[ownerid]"
+                          dataType="guid"
+                          name="ownerid" />
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Outputs[OLE DB Destination Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="OLE DB Destination Error Output"
+                      synchronousInputId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Outputs[OLE DB Destination Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Outputs[OLE DB Destination Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data"
+                  componentClassID="Microsoft.ManagedComponentHost"
+                  contactInfo="KingswaySoft Inc.; http://www.kingswaysoft.com; support@kingswaysoft.com; Copyright 2011-2017 KingswaySoft Inc."
+                  description="Extract data from Microsoft Dynamics CRM."
+                  name="Retrieve CRM Data"
+                  usesDispositions="true"
+                  version="3">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the type of source data from Microsoft Dynamics CRM."
+                      expressionType="Notify"
+                      name="SourceType"
+                      typeConverter="KingswaySoft.IntegrationToolkit.DynamicsCrm.SourceType">2</property>
+                    <property
+                      dataType="System.String"
+                      description="Dynamics CRM entity to retrieve data from."
+                      expressionType="Notify"
+                      name="SourceEntity">hsl_policy</property>
+                    <property
+                      dataType="System.String"
+                      description="FetchXML statement."
+                      expressionType="Notify"
+                      name="FetchXML"></property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the batch size of the query."
+                      expressionType="Notify"
+                      name="BatchSize">2000</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specify the maximum number of rows to be returned from the Dynamics 365/CRM server (Specify 0 to read all satisfying records)."
+                      expressionType="Notify"
+                      name="MaxRowsReturned">0</property>
+                    <property
+                      dataType="System.Null"
+                      description="The caller to be used for CRM impersonation when reading from CRM server."
+                      expressionType="Notify"
+                      name="ImpersonateAs" />
+                    <property
+                      dataType="System.Null"
+                      description="Specifies the output timezone for CRM datetime fields."
+                      expressionType="Notify"
+                      name="OutputTimezone"
+                      typeConverter="KingswaySoft.IntegrationToolkit.Common.DescriptiveEnumTypeConverter`1[[KingswaySoft.IntegrationToolkit.DynamicsCrm.SourceOutputTimezone" />
+                    <property
+                      dataType="System.String"
+                      name="UserComponentTypeName">KingswaySoft.IntegrationToolkit.DynamicsCrm.CrmSourceComponent</property>
+                    <property
+                      dataType="System.String"
+                      description="Specify the SSIS variable that stores last change token from a previous pull. If empty, all records will be read from CRM for the specified source entity. "
+                      expressionType="Notify"
+                      name="InputTokenVariable">Token</property>
+                    <property
+                      dataType="System.String"
+                      description="Specify the SSIS variable that stores the new change token after the source component is completely processed, which can be used for future pulls."
+                      expressionType="Notify"
+                      name="OutputTokenVariable">Token</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Connections[DynamicsCRM]"
+                      connectionManagerID="{45122388-21CA-44F7-9521-9BDD3F589F61}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[Common Data Service (CDS) Connection Manager]"
+                      description="Dynamics CRM Connection Manager"
+                      name="DynamicsCRM" />
+                  </connections>
+                  <outputs>
+                    <output
+                      refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output]"
+                      name="Primary Output">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[hsl_name]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_name]"
+                          length="100"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[hsl_name]"
+                          name="hsl_name"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[hsl_policyid]"
+                          dataType="guid"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_policyid]"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[hsl_policyid]"
+                          name="hsl_policyid"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[hsl_sourceillustrationid]"
+                          dataType="guid"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_sourceillustrationid]"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[hsl_sourceillustrationid]"
+                          name="hsl_sourceillustrationid"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[hsl_policynumber]"
+                          dataType="wstr"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_policynumber]"
+                          length="100"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[hsl_policynumber]"
+                          name="hsl_policynumber"
+                          truncationRowDisposition="FailComponent" />
+                        <outputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[ownerid]"
+                          dataType="guid"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[ownerid]"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].Columns[ownerid]"
+                          name="ownerid"
+                          truncationRowDisposition="FailComponent" />
+                      </outputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[createdby]"
+                          dataType="guid"
+                          name="createdby" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[createdbyname]"
+                          dataType="wstr"
+                          length="200"
+                          name="createdbyname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[createdbyyominame]"
+                          dataType="wstr"
+                          length="200"
+                          name="createdbyyominame" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[createdon]"
+                          dataType="dbTimeStamp"
+                          name="createdon" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[createdonbehalfby]"
+                          dataType="guid"
+                          name="createdonbehalfby" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[createdonbehalfbyname]"
+                          dataType="wstr"
+                          length="200"
+                          name="createdonbehalfbyname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[createdonbehalfbyyominame]"
+                          dataType="wstr"
+                          length="200"
+                          name="createdonbehalfbyyominame" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[exchangerate]"
+                          dataType="numeric"
+                          name="exchangerate"
+                          precision="38"
+                          scale="10" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_agency]"
+                          dataType="guid"
+                          name="hsl_agency" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_agencyname]"
+                          dataType="wstr"
+                          length="160"
+                          name="hsl_agencyname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_agencyyominame]"
+                          dataType="wstr"
+                          length="160"
+                          name="hsl_agencyyominame" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_agent]"
+                          dataType="guid"
+                          name="hsl_agent" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_agentinternal]"
+                          dataType="guid"
+                          name="hsl_agentinternal" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_agentinternalname]"
+                          dataType="wstr"
+                          length="200"
+                          name="hsl_agentinternalname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_agentinternalyominame]"
+                          dataType="wstr"
+                          length="200"
+                          name="hsl_agentinternalyominame" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_agentname]"
+                          dataType="wstr"
+                          length="160"
+                          name="hsl_agentname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_agentyominame]"
+                          dataType="wstr"
+                          length="450"
+                          name="hsl_agentyominame" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_amountdue]"
+                          dataType="numeric"
+                          name="hsl_amountdue"
+                          precision="38"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_amountdue_base]"
+                          dataType="numeric"
+                          name="hsl_amountdue_base"
+                          precision="38"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_billto]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_billto" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_cancellation]"
+                          dataType="bool"
+                          name="hsl_cancellation" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_cancellationname]"
+                          dataType="wstr"
+                          length="255"
+                          name="hsl_cancellationname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_cancellationreason]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_cancellationreason" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_claimfreescore]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_claimfreescore" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_commstatus]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_commstatus" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_company]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_company" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_customer]"
+                          dataType="guid"
+                          name="hsl_customer" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_customeridtype]"
+                          dataType="wstr"
+                          length="64"
+                          name="hsl_customeridtype" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_customername]"
+                          dataType="wstr"
+                          length="4000"
+                          name="hsl_customername" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_customeryominame]"
+                          dataType="wstr"
+                          length="4000"
+                          name="hsl_customeryominame" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_deductible]"
+                          dataType="numeric"
+                          name="hsl_deductible"
+                          precision="38"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_deductible_base]"
+                          dataType="numeric"
+                          name="hsl_deductible_base"
+                          precision="38"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_earnedpremdue]"
+                          dataType="numeric"
+                          name="hsl_earnedpremdue"
+                          precision="38"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_earnedpremdue_base]"
+                          dataType="numeric"
+                          name="hsl_earnedpremdue_base"
+                          precision="38"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_effectivedate]"
+                          dataType="dbTimeStamp"
+                          name="hsl_effectivedate">
+                          <properties>
+                            <property
+                              dataType="System.String"
+                              name="DateTimeBehavior">TimeZoneIndependent</property>
+                          </properties>
+                        </externalMetadataColumn>
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_freshstartdate]"
+                          dataType="dbTimeStamp"
+                          name="hsl_freshstartdate">
+                          <properties>
+                            <property
+                              dataType="System.String"
+                              name="DateTimeBehavior">TimeZoneIndependent</property>
+                          </properties>
+                        </externalMetadataColumn>
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_grossannualpremium]"
+                          dataType="numeric"
+                          name="hsl_grossannualpremium"
+                          precision="38"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_grossannualpremium_base]"
+                          dataType="numeric"
+                          name="hsl_grossannualpremium_base"
+                          precision="38"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_household]"
+                          dataType="guid"
+                          name="hsl_household" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_householdname]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_householdname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_issuedate]"
+                          dataType="dbTimeStamp"
+                          name="hsl_issuedate">
+                          <properties>
+                            <property
+                              dataType="System.String"
+                              name="DateTimeBehavior">TimeZoneIndependent</property>
+                          </properties>
+                        </externalMetadataColumn>
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_lastchange]"
+                          dataType="dbTimeStamp"
+                          name="hsl_lastchange">
+                          <properties>
+                            <property
+                              dataType="System.String"
+                              name="DateTimeBehavior">TimeZoneIndependent</property>
+                          </properties>
+                        </externalMetadataColumn>
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_name]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_name" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_nextbilldate]"
+                          dataType="dbTimeStamp"
+                          name="hsl_nextbilldate">
+                          <properties>
+                            <property
+                              dataType="System.String"
+                              name="DateTimeBehavior">TimeZoneIndependent</property>
+                          </properties>
+                        </externalMetadataColumn>
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_opportunityid]"
+                          dataType="guid"
+                          name="hsl_opportunityid" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_opportunityidname]"
+                          dataType="wstr"
+                          length="300"
+                          name="hsl_opportunityidname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_originception]"
+                          dataType="dbTimeStamp"
+                          name="hsl_originception">
+                          <properties>
+                            <property
+                              dataType="System.String"
+                              name="DateTimeBehavior">TimeZoneIndependent</property>
+                          </properties>
+                        </externalMetadataColumn>
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_policycategory]"
+                          dataType="i4"
+                          name="hsl_policycategory" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_policycategoryname]"
+                          dataType="wstr"
+                          length="255"
+                          name="hsl_policycategoryname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_policyenddate]"
+                          dataType="dbTimeStamp"
+                          name="hsl_policyenddate">
+                          <properties>
+                            <property
+                              dataType="System.String"
+                              name="DateTimeBehavior">TimeZoneIndependent</property>
+                          </properties>
+                        </externalMetadataColumn>
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_policyid]"
+                          dataType="guid"
+                          name="hsl_policyid" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_policynumber]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_policynumber" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_premium]"
+                          dataType="numeric"
+                          name="hsl_premium"
+                          precision="38"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_premium_base]"
+                          dataType="numeric"
+                          name="hsl_premium_base"
+                          precision="38"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_primaryinsured]"
+                          dataType="guid"
+                          name="hsl_primaryinsured" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_primaryinsuredname]"
+                          dataType="wstr"
+                          length="160"
+                          name="hsl_primaryinsuredname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_primaryinsuredyominame]"
+                          dataType="wstr"
+                          length="450"
+                          name="hsl_primaryinsuredyominame" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_product]"
+                          dataType="guid"
+                          name="hsl_product" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_productname]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_productname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_producttype]"
+                          dataType="i4"
+                          name="hsl_producttype" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_producttypename]"
+                          dataType="wstr"
+                          length="255"
+                          name="hsl_producttypename" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_rateseffective]"
+                          dataType="dbTimeStamp"
+                          name="hsl_rateseffective">
+                          <properties>
+                            <property
+                              dataType="System.String"
+                              name="DateTimeBehavior">TimeZoneIndependent</property>
+                          </properties>
+                        </externalMetadataColumn>
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_reinstatement]"
+                          dataType="bool"
+                          name="hsl_reinstatement" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_reinstatementname]"
+                          dataType="wstr"
+                          length="255"
+                          name="hsl_reinstatementname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_reinstatementreason]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_reinstatementreason" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_sourceapplicationid]"
+                          dataType="guid"
+                          name="hsl_sourceapplicationid" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_sourceapplicationidname]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_sourceapplicationidname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_sourceillustrationid]"
+                          dataType="guid"
+                          name="hsl_sourceillustrationid" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_sourceillustrationidname]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_sourceillustrationidname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_term]"
+                          dataType="wstr"
+                          length="100"
+                          name="hsl_term" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_tlcacctdate]"
+                          dataType="dbTimeStamp"
+                          name="hsl_tlcacctdate">
+                          <properties>
+                            <property
+                              dataType="System.String"
+                              name="DateTimeBehavior">TimeZoneIndependent</property>
+                          </properties>
+                        </externalMetadataColumn>
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_tlcpreflife]"
+                          dataType="dbTimeStamp"
+                          name="hsl_tlcpreflife">
+                          <properties>
+                            <property
+                              dataType="System.String"
+                              name="DateTimeBehavior">TimeZoneIndependent</property>
+                          </properties>
+                        </externalMetadataColumn>
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_tlcpreflifedt]"
+                          dataType="dbTimeStamp"
+                          name="hsl_tlcpreflifedt">
+                          <properties>
+                            <property
+                              dataType="System.String"
+                              name="DateTimeBehavior">TimeZoneIndependent</property>
+                          </properties>
+                        </externalMetadataColumn>
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_totalpolicypremium]"
+                          dataType="numeric"
+                          name="hsl_totalpolicypremium"
+                          precision="38"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_totalpolicypremium_base]"
+                          dataType="numeric"
+                          name="hsl_totalpolicypremium_base"
+                          precision="38"
+                          scale="4" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_typeofcoverage]"
+                          dataType="i4"
+                          name="hsl_typeofcoverage" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[hsl_typeofcoveragename]"
+                          dataType="wstr"
+                          length="255"
+                          name="hsl_typeofcoveragename" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[importsequencenumber]"
+                          dataType="i4"
+                          name="importsequencenumber" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[modifiedby]"
+                          dataType="guid"
+                          name="modifiedby" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[modifiedbyname]"
+                          dataType="wstr"
+                          length="200"
+                          name="modifiedbyname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[modifiedbyyominame]"
+                          dataType="wstr"
+                          length="200"
+                          name="modifiedbyyominame" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[modifiedon]"
+                          dataType="dbTimeStamp"
+                          name="modifiedon" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[modifiedonbehalfby]"
+                          dataType="guid"
+                          name="modifiedonbehalfby" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[modifiedonbehalfbyname]"
+                          dataType="wstr"
+                          length="200"
+                          name="modifiedonbehalfbyname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[modifiedonbehalfbyyominame]"
+                          dataType="wstr"
+                          length="200"
+                          name="modifiedonbehalfbyyominame" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[overriddencreatedon]"
+                          dataType="dbTimeStamp"
+                          name="overriddencreatedon" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[ownerid]"
+                          dataType="guid"
+                          name="ownerid" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[owneridname]"
+                          dataType="wstr"
+                          length="200"
+                          name="owneridname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[owneridtype]"
+                          dataType="wstr"
+                          length="64"
+                          name="owneridtype" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[owneridyominame]"
+                          dataType="wstr"
+                          length="200"
+                          name="owneridyominame" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[owningbusinessunit]"
+                          dataType="guid"
+                          name="owningbusinessunit" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[owningteam]"
+                          dataType="guid"
+                          name="owningteam" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[owninguser]"
+                          dataType="guid"
+                          name="owninguser" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[processid]"
+                          dataType="guid"
+                          name="processid" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[stageid]"
+                          dataType="guid"
+                          name="stageid" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[statecode]"
+                          dataType="i4"
+                          name="statecode" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[statecodename]"
+                          dataType="wstr"
+                          length="255"
+                          name="statecodename" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[statuscode]"
+                          dataType="i4"
+                          name="statuscode" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[statuscodename]"
+                          dataType="wstr"
+                          length="255"
+                          name="statuscodename" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[timezoneruleversionnumber]"
+                          dataType="i4"
+                          name="timezoneruleversionnumber" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[transactioncurrencyid]"
+                          dataType="guid"
+                          name="transactioncurrencyid" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[transactioncurrencyidname]"
+                          dataType="wstr"
+                          length="100"
+                          name="transactioncurrencyidname" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[traversedpath]"
+                          dataType="wstr"
+                          length="1250"
+                          name="traversedpath" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[utcconversiontimezonecode]"
+                          dataType="i4"
+                          name="utcconversiontimezonecode" />
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output].ExternalColumns[versionnumber]"
+                          dataType="i8"
+                          name="versionnumber" />
+                      </externalMetadataColumns>
+                    </output>
+                    <output
+                      refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[CRM Secondary Output (Deleted Records)]"
+                      name="CRM Secondary Output (Deleted Records)">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[CRM Secondary Output (Deleted Records)].Columns[Id]"
+                          dataType="guid"
+                          errorOrTruncationOperation="Conversion"
+                          errorRowDisposition="FailComponent"
+                          externalMetadataColumnId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[CRM Secondary Output (Deleted Records)].ExternalColumns[Id]"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[CRM Secondary Output (Deleted Records)].Columns[Id]"
+                          name="Id"
+                          truncationRowDisposition="FailComponent" />
+                      </outputColumns>
+                      <externalMetadataColumns>
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[CRM Secondary Output (Deleted Records)].ExternalColumns[Id]"
+                          dataType="guid"
+                          name="Id" />
+                      </externalMetadataColumns>
+                    </output>
+                  </outputs>
+                </component>
+                <component
+                  refId="Package\Sync Crm\Retrieve Changes\Stage Delete"
+                  componentClassID="Microsoft.OLEDBCommand"
+                  contactInfo="OLE DB Command;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;2"
+                  description="Runs an SQL statement for each row in a data flow. For example, call a 'new employee setup' stored procedure for each row in the 'new employees' table. Note: running an SQL statement for each row of a large data flow may take a long time."
+                  name="Stage Delete"
+                  usesDispositions="true"
+                  version="2">
+                  <properties>
+                    <property
+                      dataType="System.Int32"
+                      description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                      name="CommandTimeout">0</property>
+                    <property
+                      dataType="System.String"
+                      description="The SQL command to be executed."
+                      expressionType="Notify"
+                      name="SqlCommand"
+                      UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor, Microsoft.DataTransformationServices.Controls, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91">DELETE FROM crm.hsl_policy WHERE hsl_policyid = ?</property>
+                    <property
+                      dataType="System.Int32"
+                      description="Specifies the column code page to use when code page information is unavailable from the data source."
+                      name="DefaultCodePage">1252</property>
+                  </properties>
+                  <connections>
+                    <connection
+                      refId="Package\Sync Crm\Retrieve Changes\Stage Delete.Connections[OleDbConnection]"
+                      connectionManagerID="{4CF3AB46-A030-444B-BBB1-208E2A4D92BD}:external"
+                      connectionManagerRefId="Project.ConnectionManagers[bhp-dynamics-dv-db.database.windows.net.crmstaging.bhp_crm_sql_usr]"
+                      description="The OLE DB runtime connection used to access the database."
+                      name="OleDbConnection" />
+                  </connections>
+                  <inputs>
+                    <input
+                      refId="Package\Sync Crm\Retrieve Changes\Stage Delete.Inputs[OLE DB Command Input]"
+                      errorOrTruncationOperation="Command Execution"
+                      errorRowDisposition="FailComponent"
+                      hasSideEffects="true"
+                      name="OLE DB Command Input">
+                      <inputColumns>
+                        <inputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Stage Delete.Inputs[OLE DB Command Input].Columns[Id]"
+                          cachedDataType="guid"
+                          cachedName="Id"
+                          externalMetadataColumnId="Package\Sync Crm\Retrieve Changes\Stage Delete.Inputs[OLE DB Command Input].ExternalColumns[Param_0]"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[CRM Secondary Output (Deleted Records)].Columns[Id]" />
+                      </inputColumns>
+                      <externalMetadataColumns
+                        isUsed="True">
+                        <externalMetadataColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Stage Delete.Inputs[OLE DB Command Input].ExternalColumns[Param_0]"
+                          dataType="guid"
+                          name="Param_0">
+                          <properties>
+                            <property
+                              dataType="System.Int32"
+                              description="Parameter information.  Matches OLE DB's DBPARAMFLAGSENUM values."
+                              name="DBParamInfoFlags">65</property>
+                          </properties>
+                        </externalMetadataColumn>
+                      </externalMetadataColumns>
+                    </input>
+                  </inputs>
+                  <outputs>
+                    <output
+                      refId="Package\Sync Crm\Retrieve Changes\Stage Delete.Outputs[OLE DB Command Output]"
+                      exclusionGroup="1"
+                      name="OLE DB Command Output"
+                      synchronousInputId="Package\Sync Crm\Retrieve Changes\Stage Delete.Inputs[OLE DB Command Input]">
+                      <externalMetadataColumns />
+                    </output>
+                    <output
+                      refId="Package\Sync Crm\Retrieve Changes\Stage Delete.Outputs[OLE DB Command Error Output]"
+                      exclusionGroup="1"
+                      isErrorOut="true"
+                      name="OLE DB Command Error Output"
+                      synchronousInputId="Package\Sync Crm\Retrieve Changes\Stage Delete.Inputs[OLE DB Command Input]">
+                      <outputColumns>
+                        <outputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Stage Delete.Outputs[OLE DB Command Error Output].Columns[ErrorCode]"
+                          dataType="i4"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Stage Delete.Outputs[OLE DB Command Error Output].Columns[ErrorCode]"
+                          name="ErrorCode"
+                          specialFlags="1" />
+                        <outputColumn
+                          refId="Package\Sync Crm\Retrieve Changes\Stage Delete.Outputs[OLE DB Command Error Output].Columns[ErrorColumn]"
+                          dataType="i4"
+                          lineageId="Package\Sync Crm\Retrieve Changes\Stage Delete.Outputs[OLE DB Command Error Output].Columns[ErrorColumn]"
+                          name="ErrorColumn"
+                          specialFlags="2" />
+                      </outputColumns>
+                      <externalMetadataColumns />
+                    </output>
+                  </outputs>
+                </component>
+              </components>
+              <paths>
+                <path
+                  refId="Package\Sync Crm\Retrieve Changes.Paths[CRM Primary Output]"
+                  endId="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage.Inputs[OLE DB Destination Input]"
+                  name="CRM Primary Output"
+                  startId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[Primary Output]" />
+                <path
+                  refId="Package\Sync Crm\Retrieve Changes.Paths[CRM Secondary Output (Deleted Records)]"
+                  endId="Package\Sync Crm\Retrieve Changes\Stage Delete.Inputs[OLE DB Command Input]"
+                  name="CRM Secondary Output (Deleted Records)"
+                  startId="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data.Outputs[CRM Secondary Output (Deleted Records)]" />
+              </paths>
+            </pipeline>
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sync Crm\Truncate Changes Table"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{AA36FE8E-07F1-435D-A06A-DB4C671064C7}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Truncate Changes Table"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{4CF3AB46-A030-444B-BBB1-208E2A4D92BD}"
+              SQLTask:SqlStatementSource="TRUNCATE TABLE [crm].[hsl_policy_changes]&#xA;GO" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Sync Crm\Write Token Value"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{29403552-82A5-43EF-93B8-6CD1B3BEDDB3}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Write Token Value"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2016; © 2015 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{4CF3AB46-A030-444B-BBB1-208E2A4D92BD}"
+              SQLTask:SqlStatementSource="EXECUTE [stg].[SSIS_SaveToken] &#xA;@entityName = 'hsl_policy',&#xA;@token = ?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="@token"
+                SQLTask:DtsVariableName="User::Token"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="130"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sync Crm.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{2C8E8FF6-42B0-4D3F-8E2D-722F706456B3}"
+          DTS:From="Package\Sync Crm\Get Last Token"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Sync Crm\Retrieve Changes" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sync Crm.PrecedenceConstraints[Constraint 1]"
+          DTS:CreationName=""
+          DTS:DTSID="{77DCB227-5354-4AC6-B0FF-8EB8D0AD83C0}"
+          DTS:From="Package\Sync Crm\Truncate Changes Table"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 1"
+          DTS:To="Package\Sync Crm\Retrieve Changes" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sync Crm.PrecedenceConstraints[Constraint 2]"
+          DTS:CreationName=""
+          DTS:DTSID="{10F7FE18-6605-45D6-870D-12FBC163E9A4}"
+          DTS:From="Package\Sync Crm\Retrieve Changes"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 2"
+          DTS:To="Package\Sync Crm\Merge Changes" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Sync Crm.PrecedenceConstraints[Constraint 4]"
+          DTS:CreationName=""
+          DTS:DTSID="{83041AE1-5D9A-433C-9E58-C32FE6517580}"
+          DTS:From="Package\Sync Crm\Merge Changes"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 4"
+          DTS:To="Package\Sync Crm\Write Token Value" />
+      </DTS:PrecedenceConstraints>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="16" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="150,42"
+          Id="Package\Sync Crm\Get Last Token"
+          TopLeft="49,23" />
+        <NodeLayout
+          Size="152,42"
+          Id="Package\Sync Crm\Merge Changes"
+          TopLeft="412,176" />
+        <NodeLayout
+          Size="161.333333333334,42"
+          Id="Package\Sync Crm\Retrieve Changes"
+          TopLeft="236,99" />
+        <NodeLayout
+          Size="193.333333333334,42"
+          Id="Package\Sync Crm\Truncate Changes Table"
+          TopLeft="374,25" />
+        <NodeLayout
+          Size="166,42"
+          Id="Package\Sync Crm\Write Token Value"
+          TopLeft="56,176" />
+        <EdgeLayout
+          Id="Package\Sync Crm.PrecedenceConstraints[Constraint]"
+          TopLeft="124,65">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="167,34"
+              Start="0,0"
+              End="167,26.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16.1992619926199" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,16.1992619926199"
+                    Point2="0,20.1992619926199"
+                    Point3="4,20.1992619926199" />
+                  <mssgle:LineSegment
+                    End="163,20.1992619926199" />
+                  <mssgle:CubicBezierSegment
+                    Point1="163,20.1992619926199"
+                    Point2="167,20.1992619926199"
+                    Point3="167,24.1992619926199" />
+                  <mssgle:LineSegment
+                    End="167,26.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Sync Crm.PrecedenceConstraints[Constraint 1]"
+          TopLeft="470.5,67">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-128.5,32"
+              Start="0,0"
+              End="-128.5,24.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,15.0110701107011" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,15.0110701107011"
+                    Point2="0,19.0110701107011"
+                    Point3="-4,19.0110701107011" />
+                  <mssgle:LineSegment
+                    End="-124.5,19.0110701107011" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-124.5,19.0110701107011"
+                    Point2="-128.5,19.0110701107011"
+                    Point3="-128.5,23.0110701107011" />
+                  <mssgle:LineSegment
+                    End="-128.5,24.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Sync Crm.PrecedenceConstraints[Constraint 2]"
+          TopLeft="316.5,141">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="171.5,35"
+              Start="0,0"
+              End="171.5,27.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,13.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,13.5"
+                    Point2="0,17.5"
+                    Point3="4,17.5" />
+                  <mssgle:LineSegment
+                    End="167.5,17.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="167.5,17.5"
+                    Point2="171.5,17.5"
+                    Point3="171.5,21.5" />
+                  <mssgle:LineSegment
+                    End="171.5,27.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Sync Crm.PrecedenceConstraints[Constraint 4]"
+          TopLeft="412,197">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-190,0"
+              Start="0,0"
+              End="-182.5,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="-182.5,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="630,293.333333333334"
+          Size="630,336"
+          Id="Package\Sync Crm"
+          TopLeft="363,126" />
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+  <TaskHost
+    design-time-name="Package\Sync Crm\Retrieve Changes">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="8" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        <NodeLayout
+          Size="138.666666666667,42"
+          Id="Package\Sync Crm\Retrieve Changes\Stage Delete"
+          TopLeft="74,183" />
+        <NodeLayout
+          Size="168,42"
+          Id="Package\Sync Crm\Retrieve Changes\Retrieve CRM Data"
+          TopLeft="167,85" />
+        <NodeLayout
+          Size="178.666666666667,42"
+          Id="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage"
+          TopLeft="323,183" />
+        <EdgeLayout
+          Id="Package\Sync Crm\Retrieve Changes.Paths[CRM Secondary Output (Deleted Records)]"
+          TopLeft="224.333333333333,127">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-80.8333333333333,56"
+              Start="0,0"
+              End="-80.8333333333333,48.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,18.7169811320755" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,18.7169811320755"
+                    Point2="0,22.7169811320755"
+                    Point3="-4,22.7169811320755" />
+                  <mssgle:LineSegment
+                    End="-76.8333333333333,22.7169811320755" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-76.8333333333333,22.7169811320755"
+                    Point2="-80.8333333333333,22.7169811320755"
+                    Point3="-80.8333333333333,26.7169811320755" />
+                  <mssgle:LineSegment
+                    End="-80.8333333333333,48.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-133.585924479167,27.7169811320755,186.338515625,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Sync Crm\Retrieve Changes.Paths[CRM Primary Output]"
+          TopLeft="277.666666666667,127">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="134.833333333333,56"
+              Start="0,0"
+              End="134.833333333333,48.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,18.7169811320755" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,18.7169811320755"
+                    Point2="0,22.7169811320755"
+                    Point3="4,22.7169811320755" />
+                  <mssgle:LineSegment
+                    End="130.833333333333,22.7169811320755" />
+                  <mssgle:CubicBezierSegment
+                    Point1="130.833333333333,22.7169811320755"
+                    Point2="134.833333333333,22.7169811320755"
+                    Point3="134.833333333333,26.7169811320755" />
+                  <mssgle:LineSegment
+                    End="134.833333333333,48.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="33.1852799479165,27.7169811320755,68.4627734375,11.43359375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Sync Crm\Retrieve Changes\Crm Changes - Stage">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
